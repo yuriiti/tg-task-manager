@@ -1,4 +1,6 @@
 import { init, cloudStorage, retrieveLaunchParams } from '@tma.js/sdk-react';
+import { getMockInitData } from './mock-init-data';
+import { env } from '../../config/env';
 
 let sdkInitialized = false;
 let initDataRaw: string | null = null;
@@ -70,6 +72,25 @@ export function isTelegramSDKAvailable(): boolean {
  */
 export function isCloudStorageAvailable(): boolean {
   return isTelegramSDKAvailable() && cloudStorage.isSupported();
+}
+
+/**
+ * Получить initData для авторизации (реальный или mock)
+ */
+export function getAuthInitData(): { initData: string; isMock: boolean } {
+  if (isTelegramSDKAvailable()) {
+    const initData = getInitData();
+    if (initData) {
+      return { initData, isMock: false };
+    }
+  }
+
+  // В dev режиме используем mock
+  if (env.NODE_ENV === 'development') {
+    return { initData: getMockInitData(), isMock: true };
+  }
+
+  throw new Error('No initData available and not in development mode');
 }
 
 // Инициализация при импорте модуля

@@ -7,7 +7,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 
 # Copy package files and workspace configuration
-COPY package.json pnpm-workspace.yaml ./
+COPY package.json pnpm-workspace.yaml turbo.json ./
 COPY pnpm-lock.yaml* ./
 
 # Copy all package.json files first
@@ -35,4 +35,4 @@ COPY apps/api ./apps/api
 EXPOSE 3000
 
 # Start development server
-CMD ["turbo", "run", "dev", "--filter=api"]
+CMD ["pnpm", "exec", "turbo", "run", "dev", "--filter=@task-manager/api"]

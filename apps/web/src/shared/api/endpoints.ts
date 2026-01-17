@@ -3,7 +3,7 @@
  */
 export const endpoints = {
   auth: {
-    login: '/auth/login',
+    profile: '/auth/login',
   },
   tasks: {
     list: '/tasks',

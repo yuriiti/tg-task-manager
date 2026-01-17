@@ -7,16 +7,8 @@ export const userApi = {
     const response = await apiClient.get(`/users/${id}`);
     return response.data;
   },
-  login: async (initData: string, isMock: boolean = false): Promise<AuthResult> => {
-    const response = await apiClient.post(
-      endpoints.auth.login,
-      null,
-      {
-        headers: {
-          Authorization: isMock ? `mock-tma ${initData}` : `TMA ${initData}`,
-        },
-      }
-    );
+  profile: async (): Promise<AuthResult> => {
+    const response = await apiClient.post(endpoints.auth.profile);
     return response.data;
   },
 };

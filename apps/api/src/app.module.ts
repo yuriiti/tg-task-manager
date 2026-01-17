@@ -14,7 +14,6 @@ import { ResponseValidationInterceptor } from './common/interceptors';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
     }),
     MongooseModule.forRootAsync({
       useFactory: () => {

@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { env } from '../config/env';
-import { getInitData, isTelegramSDKAvailable } from '../lib/telegram/telegram-sdk';
-import { getMockInitData } from '../lib/telegram/mock-init-data';
+import { getAuthInitData } from '../lib/telegram/telegram-sdk';
 
 export const apiClient = axios.create({
   baseURL: env.API_URL || 'http://localhost:3000/api',
@@ -18,29 +17,18 @@ apiClient.interceptors.request.use(
       return config;
     }
 
-    // Получаем initData
-    let initData: string | null = null;
-    let isMock = false;
+    // Получаем initData для авторизации
+    try {
+      const { initData, isMock } = getAuthInitData();
 
-    if (isTelegramSDKAvailable()) {
-      initData = getInitData();
-    }
-
-    // Если SDK недоступен и мы в dev режиме, используем mock
-    if (!initData && env.NODE_ENV === 'development') {
-      try {
-        initData = getMockInitData();
-        isMock = true;
-      } catch (error) {
-        console.warn('Failed to get mock initData:', error);
+      // Добавляем initData в заголовок
+      if (initData) {
+        config.headers.Authorization = isMock ? `mock-tma ${initData}` : `TMA ${initData}`;
       }
-    }
-
-    // Добавляем initData в заголовок
-    if (initData) {
-      config.headers.Authorization = isMock 
-        ? `mock-tma ${initData}`
-        : `TMA ${initData}`;
+    } catch (error) {
+      // Если initData недоступен, запрос уйдет без заголовка Authorization
+      // Это нормально для некоторых публичных endpoints
+      console.warn('Failed to get auth initData:', error);
     }
 
     return config;
