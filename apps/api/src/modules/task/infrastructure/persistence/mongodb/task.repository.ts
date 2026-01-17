@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { ITaskRepository } from '../../../domain/interfaces/task.repository.interface';
 import { TaskEntity } from '../../../domain/entities/task.entity';
 import { Task, TaskDocument } from './task.schema';
@@ -18,7 +18,9 @@ export class TaskRepository implements ITaskRepository {
   }
 
   async findByUserId(userId: string, params?: TaskQueryParams): Promise<TaskEntity[]> {
-    const query: any = { userId };
+    // userId is MongoDB _id (string), convert to ObjectId
+    const userObjectId = new Types.ObjectId(userId);
+    const query: any = { userId: userObjectId };
 
     if (params?.status) {
       query.status = params.status;
@@ -55,8 +57,10 @@ export class TaskRepository implements ITaskRepository {
   }
 
   async create(task: TaskEntity): Promise<TaskEntity> {
+    // userId is MongoDB _id (string), convert to ObjectId
+    const userObjectId = new Types.ObjectId(task.userId);
     const createdTask = new this.taskModel({
-      userId: task.userId,
+      userId: userObjectId,
       title: task.title,
       description: task.description,
       status: task.status,
@@ -84,7 +88,9 @@ export class TaskRepository implements ITaskRepository {
   }
 
   async count(userId: string, filters?: { status?: TaskStatus; priority?: TaskPriority }): Promise<number> {
-    const query: any = { userId };
+    // userId is MongoDB _id (string), convert to ObjectId
+    const userObjectId = new Types.ObjectId(userId);
+    const query: any = { userId: userObjectId };
     if (filters?.status) query.status = filters.status;
     if (filters?.priority) query.priority = filters.priority;
     return this.taskModel.countDocuments(query).exec();
@@ -98,14 +104,14 @@ export class TaskRepository implements ITaskRepository {
   private toDomain(task: TaskDocument): TaskEntity {
     return new TaskEntity(
       task._id.toString(),
-      task.userId,
+      task.userId.toString(), // Convert ObjectId to string
       task.title,
       task.description,
       task.status,
       task.priority,
       task.dueDate,
       task.tags,
-      task.workspaceId,
+      task.workspaceId?.toString(),
       task.createdAt,
       task.updatedAt,
     );

@@ -11,7 +11,7 @@ export class UserController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const user = await this.userService.create({
-      id: createUserDto.id,
+      userId: createUserDto.userId,
       username: createUserDto.username,
       firstName: createUserDto.firstName,
       lastName: createUserDto.lastName,

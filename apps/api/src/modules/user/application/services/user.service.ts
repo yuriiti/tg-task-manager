@@ -4,7 +4,7 @@ import { USER_REPOSITORY_TOKEN } from '../../domain/interfaces/user.repository.t
 import { UserEntity } from '../../domain/entities/user.entity';
 
 export interface CreateUserData {
-  id: string; // telegramId
+  userId: string; // telegramId
   username: string;
   firstName?: string;
   lastName?: string;
@@ -20,13 +20,15 @@ export class UserService {
   ) {}
 
   async create(data: CreateUserData): Promise<UserEntity> {
-    const existingUser = await this.userRepository.findById(data.id);
+    const existingUser = await this.userRepository.findByUserId(data.userId);
     if (existingUser) {
-      throw new ConflictException('User with this ID already exists');
+      throw new ConflictException('User with this userId already exists');
     }
 
+    // При создании id будет пустой, MongoDB создаст _id автоматически
     const user = new UserEntity(
-      data.id, // telegramId используется как id
+      '', // id будет установлен MongoDB при сохранении
+      data.userId, // telegramId
       data.username,
       true,
       data.firstName,
@@ -43,6 +45,14 @@ export class UserService {
     const user = await this.userRepository.findById(id);
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
+  }
+
+  async findByUserId(userId: string): Promise<UserEntity> {
+    const user = await this.userRepository.findByUserId(userId);
+    if (!user) {
+      throw new NotFoundException(`User with userId ${userId} not found`);
     }
     return user;
   }

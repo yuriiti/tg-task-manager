@@ -58,15 +58,15 @@ export class MockTmaAuthStrategy implements IAuthStrategy {
     const mockFirstName = this.extractMockFirstName(authData) || 'Mock';
     const mockLastName = this.extractMockLastName(authData) || 'User';
 
-    // Find or create user by Telegram ID
-    let user = await this.userService.findOne(mockTelegramId).catch(() => null);
+    // Find or create user by Telegram ID (userId = telegramId)
+    let user = await this.userService.findByUserId(mockTelegramId).catch(() => null);
 
     if (!user) {
       // Create new user from mock data
-      // Handle ConflictException in case user was created between findOne and create
+      // Handle ConflictException in case user was created between findByUserId and create
       try {
         user = await this.userService.create({
-          id: mockTelegramId,
+          userId: mockTelegramId,
           username: mockUsername,
           firstName: mockFirstName,
           lastName: mockLastName,
@@ -75,8 +75,8 @@ export class MockTmaAuthStrategy implements IAuthStrategy {
         });
       } catch (error) {
         if (error instanceof ConflictException) {
-          // User was created between findOne and create, fetch it again
-          user = await this.userService.findOne(mockTelegramId).catch(() => null);
+          // User was created between findByUserId and create, fetch it again
+          user = await this.userService.findByUserId(mockTelegramId).catch(() => null);
           if (!user) {
             throw new UnauthorizedException('Failed to create or find user');
           }

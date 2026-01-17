@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../../application/services/auth.service';
 import { AuthRequest } from '../../domain/interfaces/auth-strategy.interface';
+import { AuthenticatedRequest } from '../../../../common/types/request.types';
 
 /**
  * Abstract authentication guard that uses AuthService with strategies
@@ -15,13 +16,13 @@ export class AuthGuard implements CanActivate {
   constructor(private readonly authService: AuthService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     
     const authRequest: AuthRequest = {
-      authorization: request.headers['authorization'],
-      body: request.body,
-      headers: request.headers,
       ...request,
+      authorization: request.headers['authorization'] as string | undefined,
+      body: request.body,
+      headers: request.headers as Record<string, string>,
     };
 
     try {

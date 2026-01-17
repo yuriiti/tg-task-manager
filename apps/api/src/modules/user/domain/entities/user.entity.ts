@@ -2,7 +2,8 @@ import { User } from '@task-manager/types';
 
 export class UserEntity implements Omit<User, 'lastLoginAt' | 'createdAt' | 'updatedAt'> {
   constructor(
-    public readonly id: string,
+    public readonly id: string, // MongoDB _id
+    public readonly userId: string, // telegramId (приватное поле)
     public readonly username: string,
     public readonly isActive: boolean = true,
     public readonly firstName?: string,

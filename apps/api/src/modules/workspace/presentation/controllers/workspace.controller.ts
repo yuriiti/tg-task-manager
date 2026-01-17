@@ -9,6 +9,7 @@ import {
   Request,
   UseGuards,
   Sse,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { WorkspaceService } from '../../application/services/workspace.service';
@@ -21,6 +22,7 @@ import {
 import { WorkspaceEntity } from '../../domain/entities/workspace.entity';
 import { WorkspaceMemberGuard } from '../guards/workspace-member.guard';
 import { WorkspaceEventService } from '../../infrastructure/events/workspace-event.service';
+import { AuthenticatedRequest } from '../../../../common/types/request.types';
 
 @Controller('workspaces')
 export class WorkspaceController {
@@ -32,17 +34,20 @@ export class WorkspaceController {
   @Post()
   async create(
     @Body() createWorkspaceDto: CreateWorkspaceDto,
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
   ): Promise<WorkspaceResponseDto> {
-    const userId = req.user?.id || req.user?.userId;
+    const userId = req.user?.id; // MongoDB _id
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
     const workspace = await this.workspaceService.create(userId, createWorkspaceDto);
     return this.toResponseDto(workspace);
   }
 
   @Get(':id')
   @UseGuards(WorkspaceMemberGuard)
-  async findOne(@Param('id') id: string, @Request() req: any): Promise<WorkspaceResponseDto> {
-    const userId = req.user?.id || req.user?.userId;
+  async findOne(@Param('id') id: string, @Request() req: AuthenticatedRequest): Promise<WorkspaceResponseDto> {
+    const userId = req.user?.id; // MongoDB _id
     const workspace = await this.workspaceService.findOne(id, userId);
     return this.toResponseDto(workspace);
   }
@@ -52,17 +57,17 @@ export class WorkspaceController {
   async update(
     @Param('id') id: string,
     @Body() updateWorkspaceDto: UpdateWorkspaceDto,
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
   ): Promise<WorkspaceResponseDto> {
-    const userId = req.user?.id || req.user?.userId;
+    const userId = req.user?.id; // MongoDB _id
     const workspace = await this.workspaceService.update(id, userId, updateWorkspaceDto);
     return this.toResponseDto(workspace);
   }
 
   @Delete(':id')
   @UseGuards(WorkspaceMemberGuard)
-  async remove(@Param('id') id: string, @Request() req: any): Promise<void> {
-    const userId = req.user?.id || req.user?.userId;
+  async remove(@Param('id') id: string, @Request() req: AuthenticatedRequest): Promise<void> {
+    const userId = req.user?.id; // MongoDB _id
     await this.workspaceService.delete(id, userId);
   }
 
@@ -71,9 +76,9 @@ export class WorkspaceController {
   async inviteParticipant(
     @Param('id') id: string,
     @Body() inviteParticipantDto: InviteParticipantDto,
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
   ): Promise<WorkspaceResponseDto> {
-    const userId = req.user?.id || req.user?.userId;
+    const userId = req.user?.id; // MongoDB _id
     const workspace = await this.workspaceService.inviteParticipant(
       id,
       userId,

@@ -53,13 +53,13 @@ export class TmaAuthStrategy implements IAuthStrategy {
     const telegramUser = validatedData.user;
     const telegramId = telegramUser.id.toString();
 
-    // Find or create user by Telegram ID (which is now the main id)
-    let user = await this.userService.findOne(telegramId).catch(() => null);
+    // Find or create user by Telegram ID (userId = telegramId)
+    let user = await this.userService.findByUserId(telegramId).catch(() => null);
 
     if (!user) {
       // Create new user from Telegram data
       user = await this.userService.create({
-        id: telegramId,
+        userId: telegramId,
         username: telegramUser.username || `user_${telegramUser.id}`,
         firstName: telegramUser.first_name,
         lastName: telegramUser.last_name,

@@ -10,7 +10,7 @@ export type UserDocument = User &
 @Schema({ timestamps: true })
 export class User {
   @Prop({ required: true, unique: true })
-  id: string; // telegramId используется как _id
+  userId: string; // telegramId
 
   @Prop({ required: true })
   username: string;
@@ -40,6 +40,6 @@ export class User {
 export const UserSchema = SchemaFactory.createForClass(User);
 
 // Indexes
-UserSchema.index({ id: 1 }, { unique: true });
+UserSchema.index({ userId: 1 }, { unique: true });
 UserSchema.index({ username: 1 });
 UserSchema.index({ createdAt: 1 });

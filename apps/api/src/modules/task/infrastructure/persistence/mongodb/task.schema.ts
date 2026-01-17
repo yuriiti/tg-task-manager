@@ -10,8 +10,8 @@ export type TaskDocument = Task &
 
 @Schema({ timestamps: true })
 export class Task {
-  @Prop({ required: true, type: String, ref: 'User' })
-  userId: string;
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  userId: MongooseSchema.Types.ObjectId;
 
   @Prop({ required: true })
   title: string;

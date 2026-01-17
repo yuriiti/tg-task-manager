@@ -7,32 +7,43 @@ import {
   Param,
   Delete,
   Request,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { TaskService } from '../../application/services/task.service';
 import { CreateTaskDto, UpdateTaskDto, TaskResponseDto } from '../../application/dto';
 import { TaskEntity } from '../../domain/entities/task.entity';
+import { AuthenticatedRequest } from '../../../../common/types/request.types';
 
 @Controller('tasks')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Post()
-  async create(@Body() createTaskDto: CreateTaskDto, @Request() req: any): Promise<TaskResponseDto> {
-    const userId = req.user?.id || req.user?.userId;
+  async create(
+    @Body() createTaskDto: CreateTaskDto,
+    @Request() req: AuthenticatedRequest,
+  ): Promise<TaskResponseDto> {
+    const userId = req.user.id; // MongoDB _id
+
     const task = await this.taskService.create(userId, createTaskDto);
     return this.toResponseDto(task);
   }
 
   @Get()
-  async findAll(@Request() req: any): Promise<TaskResponseDto[]> {
-    const userId = req.user?.id || req.user?.userId;
+  async findAll(@Request() req: AuthenticatedRequest): Promise<TaskResponseDto[]> {
+    const userId = req.user.id; // MongoDB _id
+
     const tasks = await this.taskService.findAll(userId);
     return tasks.map((task) => this.toResponseDto(task));
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Request() req: any): Promise<TaskResponseDto> {
-    const userId = req.user?.id || req.user?.userId;
+  async findOne(
+    @Param('id') id: string,
+    @Request() req: AuthenticatedRequest,
+  ): Promise<TaskResponseDto> {
+    const userId = req.user.id; // MongoDB _id
+
     const task = await this.taskService.findOne(id, userId);
     return this.toResponseDto(task);
   }
@@ -41,16 +52,18 @@ export class TaskController {
   async update(
     @Param('id') id: string,
     @Body() updateTaskDto: UpdateTaskDto,
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
   ): Promise<TaskResponseDto> {
-    const userId = req.user?.id || req.user?.userId;
+    const userId = req.user.id; // MongoDB _id
+
     const task = await this.taskService.update(id, userId, updateTaskDto);
     return this.toResponseDto(task);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string, @Request() req: any): Promise<void> {
-    const userId = req.user?.id || req.user?.userId;
+  async remove(@Param('id') id: string, @Request() req: AuthenticatedRequest): Promise<void> {
+    const userId = req.user.id; // MongoDB _id
+
     await this.taskService.remove(id, userId);
   }
 

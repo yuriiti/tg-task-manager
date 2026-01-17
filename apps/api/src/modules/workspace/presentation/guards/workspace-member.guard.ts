@@ -6,6 +6,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { IWorkspaceRepository } from '../../domain/interfaces/workspace.repository.interface';
+import { AuthenticatedRequest } from '../../../../common/types/request.types';
 
 @Injectable()
 export class WorkspaceMemberGuard implements CanActivate {
@@ -14,9 +15,9 @@ export class WorkspaceMemberGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const workspaceId = request.params.id;
-    const userId = request.user?.id || request.user?.userId;
+    const userId = request.user?.id; // MongoDB _id
 
     if (!userId) {
       throw new ForbiddenException('User not authenticated');

@@ -7,13 +7,17 @@ import { User, UserDocument } from './user.schema';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
-  constructor(
-    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
-  ) {}
+  constructor(@InjectModel(User.name) private readonly userModel: Model<UserDocument>) {}
 
   async findById(id: string): Promise<UserEntity | null> {
-    // id is telegramId, search by id field
-    const user = await this.userModel.findOne({ id }).exec();
+    // id is MongoDB _id
+    const user = await this.userModel.findById(id).exec();
+    return user ? this.toDomain(user) : null;
+  }
+
+  async findByUserId(userId: string): Promise<UserEntity | null> {
+    // userId is telegramId
+    const user = await this.userModel.findOne({ userId }).exec();
     return user ? this.toDomain(user) : null;
   }
 
@@ -24,7 +28,7 @@ export class UserRepository implements IUserRepository {
 
   async create(user: UserEntity): Promise<UserEntity> {
     const createdUser = new this.userModel({
-      id: user.id, // telegramId используется как id
+      userId: user.userId, // telegramId
       username: user.username,
       isActive: user.isActive,
       firstName: user.firstName,
@@ -41,20 +45,21 @@ export class UserRepository implements IUserRepository {
 
   async update(id: string, user: Partial<UserEntity>): Promise<UserEntity | null> {
     const updated = await this.userModel
-      .findOneAndUpdate({ id }, { ...user, updatedAt: new Date() }, { new: true })
+      .findByIdAndUpdate(id, { ...user, updatedAt: new Date() }, { new: true })
       .exec();
 
     return updated ? this.toDomain(updated) : null;
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await this.userModel.findOneAndDelete({ id }).exec();
+    const result = await this.userModel.findByIdAndDelete(id).exec();
     return !!result;
   }
 
   private toDomain(user: UserDocument): UserEntity {
     return new UserEntity(
-      user.id, // id = telegramId
+      user._id.toString(), // MongoDB _id
+      user.userId, // telegramId
       user.username,
       user.isActive,
       user.firstName,

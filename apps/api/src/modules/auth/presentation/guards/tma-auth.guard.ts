@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../../application/services/auth.service';
 import { AuthRequest, AuthResult } from '../../domain/interfaces/auth-strategy.interface';
+import { AuthenticatedRequest } from '../../../../common/types/request.types';
 
 /**
  * TMA-specific authentication guard
@@ -19,19 +20,19 @@ export class TmaAuthGuard implements CanActivate {
   constructor(private readonly authService: AuthService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
 
     const authRequest: AuthRequest = {
-      authorization: request.headers['authorization'],
-      body: request.body,
-      headers: request.headers,
       ...request,
+      authorization: request.headers['authorization'] as string | undefined,
+      body: request.body,
+      headers: request.headers as Record<string, string>,
     };
 
     try {
       // Use TMA strategy specifically
-      let authResult: AuthResult
-      
+      let authResult: AuthResult;
+
       try {
         authResult = await this.authService.authenticateWithStrategy('TMA', authRequest);
       } catch (error) {
@@ -41,7 +42,7 @@ export class TmaAuthGuard implements CanActivate {
           throw error;
         }
       }
-      
+
       // Attach user to request
       request.user = authResult.user;
 

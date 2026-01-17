@@ -34,7 +34,7 @@ db.createCollection("users");
 db.createCollection("tasks");
 
 // Create indexes for users collection
-db.users.createIndex({ id: 1 }, { unique: true });
+db.users.createIndex({ userId: 1 }, { unique: true });
 db.users.createIndex({ username: 1 });
 db.users.createIndex({ createdAt: 1 });
 
