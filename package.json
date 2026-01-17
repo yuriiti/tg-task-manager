@@ -5,6 +5,7 @@
   "description": "Task Manager monorepo with NestJS backend and React frontend",
   "scripts": {
     "dev": "turbo run dev",
+    "dev:api": "turbo run dev --filter=api",
     "dev:web": "turbo run dev --filter=@task-manager/web",
     "build": "turbo run build",
     "lint": "turbo run lint",

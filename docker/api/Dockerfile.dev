@@ -23,10 +23,10 @@ COPY packages/ui ./packages/ui
 
 # Install dependencies (without frozen-lockfile in dev mode for flexibility)
 RUN if [ -f pnpm-lock.yaml ]; then \
-      pnpm install --frozen-lockfile; \
-    else \
-      pnpm install; \
-    fi
+  pnpm install --frozen-lockfile; \
+  else \
+  pnpm install; \
+  fi
 
 # Copy API source code
 COPY apps/api ./apps/api
@@ -35,4 +35,4 @@ COPY apps/api ./apps/api
 EXPOSE 3000
 
 # Start development server
-CMD ["pnpm", "--filter", "api", "dev"]
+CMD ["turbo", "run", "dev", "--filter=api"]

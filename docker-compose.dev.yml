@@ -83,7 +83,7 @@ services:
         condition: service_healthy
     networks:
       - task-manager-network
-    command: pnpm --filter api dev
+    command: pnpm dev:api
 
 volumes:
   mongodb_data:
