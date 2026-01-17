@@ -5,6 +5,7 @@ import { TaskDetailPage } from '../../pages/task-detail';
 import { LoginPage } from '../../pages/login';
 import { WelcomePage } from '../../pages/welcome';
 import { HomePage } from '../../pages/home';
+import { ProfilePage } from '../../pages/profile';
 import { ProtectedRoute, WelcomeGuard } from './protected-route';
 
 export const RouterProvider: React.FC = () => {
@@ -46,6 +47,16 @@ export const RouterProvider: React.FC = () => {
             <ProtectedRoute>
               <TaskDetailPage />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <WelcomeGuard>
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            </WelcomeGuard>
           }
         />
         <Route path="/login" element={<LoginPage />} />

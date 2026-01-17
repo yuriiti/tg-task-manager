@@ -96,6 +96,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@ant-design/icons':
+        specifier: ^6.1.0
+        version: 6.1.0(react-dom@19.2.3)(react@19.2.3)
       '@tanstack/react-query':
         specifier: ^5.14.0
         version: 5.90.18(react@19.2.3)

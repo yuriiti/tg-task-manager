@@ -406,3 +406,111 @@ export const endpoints = {
 import { endpoints } from '@/shared/api/endpoints';
 const url = endpoints.auth.login; // '/auth/login'
 ```
+
+## Использование Ant Design
+
+### Принципы
+
+В проекте используется **Ant Design 6.2.0** для UI компонентов. При разработке компонентов следует:
+
+1. **Использовать компоненты Ant Design вместо нативных HTML элементов со стилями**
+   - Используйте `Flex`, `Space`, `Layout` вместо `div` с inline стилями
+   - Используйте `Typography` для текстовых элементов
+   - Используйте `Button`, `Input`, `Avatar` и другие компоненты из библиотеки
+
+2. **Избегать inline стилей для layout**
+   - Используйте пропсы компонентов Ant Design (`gap`, `align`, `justify`, `direction`)
+   - Минимизируйте использование `style` пропса
+   - Используйте встроенные пропсы компонентов для стилизации
+
+### Основные компоненты для layout
+
+#### Flex
+
+Компонент для flexbox layout:
+
+```tsx
+import { Flex } from 'antd';
+
+<Flex
+  vertical              // flex-direction: column
+  align="center"       // align-items: center
+  justify="center"     // justify-content: center
+  gap={24}             // gap между элементами
+>
+  <Avatar />
+  <Typography.Title>Name</Typography.Title>
+</Flex>
+```
+
+#### Space
+
+Компонент для создания отступов между элементами:
+
+```tsx
+import { Space } from 'antd';
+
+<Space direction="vertical" align="center" size={4}>
+  <Typography.Title>First Name</Typography.Title>
+  <Typography.Text type="secondary">Last Name</Typography.Text>
+</Space>
+```
+
+#### Typography
+
+Компоненты для текстовых элементов:
+
+```tsx
+import { Typography } from 'antd';
+
+const { Title, Text, Paragraph } = Typography;
+
+<Title level={2}>Заголовок</Title>
+<Text type="secondary">Вторичный текст</Text>
+<Paragraph>Абзац текста</Paragraph>
+```
+
+### Пример: Страница профиля
+
+**Плохо** (использование div со стилями):
+```tsx
+<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  <Avatar />
+  <div style={{ textAlign: 'center' }}>
+    <Title>Name</Title>
+  </div>
+</div>
+```
+
+**Хорошо** (использование компонентов Ant Design):
+```tsx
+<Flex vertical align="center" gap={24}>
+  <Avatar size={120} />
+  <Space direction="vertical" align="center" size={4}>
+    <Title level={2}>Name</Title>
+    <Text type="secondary">Last Name</Text>
+  </Space>
+</Flex>
+```
+
+### Доступные компоненты
+
+Все компоненты Ant Design доступны напрямую из пакета `antd`:
+
+```tsx
+import { 
+  Avatar, 
+  Button, 
+  Flex, 
+  Space, 
+  Typography, 
+  Layout,
+  Input,
+  Modal,
+  // ... другие компоненты
+} from 'antd';
+```
+
+### Кастомизация
+
+Для глобальной кастомизации Ant Design используется `ConfigProvider` в `app/providers/antd.provider.tsx`. Для локальной кастомизации используйте пропсы компонентов или темы Ant Design.
