@@ -7,6 +7,7 @@ import { TaskModule } from './modules/task/task.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { SharedModule } from './modules/shared/shared.module';
+import { WorkspaceModule } from './modules/workspace/workspace.module';
 import { TmaAuthGuard } from './modules/auth/presentation/guards/tma-auth.guard';
 import { ResponseValidationInterceptor } from './common/interceptors';
 
@@ -30,6 +31,7 @@ import { ResponseValidationInterceptor } from './common/interceptors';
     UserModule,
     TaskModule,
     AuthModule,
+    WorkspaceModule,
   ],
   providers: [
     {

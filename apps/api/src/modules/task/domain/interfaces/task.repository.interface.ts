@@ -8,4 +8,5 @@ export interface ITaskRepository {
   update(id: string, task: Partial<TaskEntity>): Promise<TaskEntity | null>;
   delete(id: string): Promise<boolean>;
   count(userId: string, filters?: { status?: TaskStatus; priority?: TaskPriority }): Promise<number>;
+  deleteByWorkspaceId(workspaceId: string): Promise<number>;
 }

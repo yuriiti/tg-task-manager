@@ -1,11 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 import { TaskStatus, TaskPriority } from '@task-manager/types';
 
-export type TaskDocument = Task & Document & {
-  createdAt: Date;
-  updatedAt: Date;
-};
+export type TaskDocument = Task &
+  Document & {
+    createdAt: Date;
+    updatedAt: Date;
+  };
 
 @Schema({ timestamps: true })
 export class Task {
@@ -29,6 +30,9 @@ export class Task {
 
   @Prop({ type: [String], default: [] })
   tags: string[];
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Workspace' })
+  workspaceId?: MongooseSchema.Types.ObjectId;
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);

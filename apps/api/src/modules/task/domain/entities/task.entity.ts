@@ -10,6 +10,7 @@ export class TaskEntity {
     public readonly priority: TaskPriority = TaskPriority.MEDIUM,
     public readonly dueDate?: Date,
     public readonly tags: string[] = [],
+    public readonly workspaceId?: string,
     public readonly createdAt: Date = new Date(),
     public readonly updatedAt: Date = new Date(),
   ) {}

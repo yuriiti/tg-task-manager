@@ -63,6 +63,7 @@ export class TaskRepository implements ITaskRepository {
       priority: task.priority,
       dueDate: task.dueDate,
       tags: task.tags,
+      workspaceId: task.workspaceId,
     });
 
     const saved = await createdTask.save();
@@ -89,6 +90,11 @@ export class TaskRepository implements ITaskRepository {
     return this.taskModel.countDocuments(query).exec();
   }
 
+  async deleteByWorkspaceId(workspaceId: string): Promise<number> {
+    const result = await this.taskModel.deleteMany({ workspaceId }).exec();
+    return result.deletedCount || 0;
+  }
+
   private toDomain(task: TaskDocument): TaskEntity {
     return new TaskEntity(
       task._id.toString(),
@@ -99,6 +105,7 @@ export class TaskRepository implements ITaskRepository {
       task.priority,
       task.dueDate,
       task.tags,
+      task.workspaceId,
       task.createdAt,
       task.updatedAt,
     );
