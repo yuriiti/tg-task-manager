@@ -52,3 +52,19 @@ export interface TaskQueryParams {
   sortBy?: "createdAt" | "dueDate" | "priority";
   sortOrder?: "asc" | "desc";
 }
+
+export enum TaskEventType {
+  CREATED = "task_created",
+  UPDATED = "task_updated",
+  DELETED = "task_deleted",
+  STATUS_CHANGED = "task_status_changed",
+}
+
+export interface TaskEvent {
+  type: TaskEventType;
+  userId: string;
+  payload: {
+    task: Task;
+    workspaceId?: string;
+  };
+}

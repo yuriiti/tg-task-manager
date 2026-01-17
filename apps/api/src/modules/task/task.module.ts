@@ -5,6 +5,7 @@ import { TaskService } from './application/services/task.service';
 import { TaskQueryService } from './application/services/task-query.service';
 import { TaskRepository } from './infrastructure/persistence/mongodb/task.repository';
 import { TaskCacheRepository } from './infrastructure/persistence/redis/task-cache.repository';
+import { TaskEventService } from './infrastructure/events/task-event.service';
 import { Task, TaskSchema } from './infrastructure/persistence/mongodb/task.schema';
 // import { ITaskRepository } from './domain/interfaces/task.repository.interface';
 
@@ -22,6 +23,7 @@ import { Task, TaskSchema } from './infrastructure/persistence/mongodb/task.sche
       useClass: TaskRepository,
     },
     TaskCacheRepository,
+    TaskEventService,
   ],
   exports: [TaskService],
 })

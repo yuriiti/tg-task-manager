@@ -8,15 +8,21 @@ import {
   Delete,
   Request,
   UnauthorizedException,
+  Sse,
 } from '@nestjs/common';
+import { Observable } from 'rxjs';
 import { TaskService } from '../../application/services/task.service';
 import { CreateTaskDto, UpdateTaskDto, TaskResponseDto } from '../../application/dto';
 import { TaskEntity } from '../../domain/entities/task.entity';
 import { AuthenticatedRequest } from '../../../../common/types/request.types';
+import { TaskEventService } from '../../infrastructure/events/task-event.service';
 
 @Controller('tasks')
 export class TaskController {
-  constructor(private readonly taskService: TaskService) {}
+  constructor(
+    private readonly taskService: TaskService,
+    private readonly taskEventService: TaskEventService,
+  ) {}
 
   @Post()
   async create(
@@ -35,6 +41,13 @@ export class TaskController {
 
     const tasks = await this.taskService.findAll(userId);
     return tasks.map((task) => this.toResponseDto(task));
+  }
+
+  @Get('sse')
+  @Sse()
+  taskSse(@Request() req: AuthenticatedRequest): Observable<MessageEvent> {
+    const userId = req.user.id;
+    return this.taskEventService.getEventStream(userId);
   }
 
   @Get(':id')
