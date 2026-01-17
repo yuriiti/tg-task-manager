@@ -1,4 +1,6 @@
-export class UserResponseDto {
+import { User } from '@task-manager/types';
+
+export class UserResponseDto implements User {
   id: string;
   username: string;
   isActive: boolean;
@@ -7,7 +9,7 @@ export class UserResponseDto {
   languageCode?: string;
   isPremium?: boolean;
   photoUrl?: string;
-  lastLoginAt?: Date | string;
-  createdAt: Date | string;
-  updatedAt: Date | string;
+  lastLoginAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }

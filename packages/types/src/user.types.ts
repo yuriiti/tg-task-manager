@@ -1,11 +1,15 @@
 export interface User {
   id: string;
-  email: string;
   username: string;
   isActive: boolean;
-  lastLoginAt?: Date | string;
-  createdAt: Date | string;
-  updatedAt: Date | string;
+  firstName?: string;
+  lastName?: string;
+  languageCode?: string;
+  isPremium?: boolean;
+  photoUrl?: string;
+  lastLoginAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateUserDto {
@@ -27,5 +31,5 @@ export interface LoginDto {
 
 export interface AuthResponse {
   accessToken: string;
-  user: Omit<User, 'passwordHash'>;
+  user: Omit<User, "passwordHash">;
 }

@@ -37,9 +37,9 @@ export class UserController {
       languageCode: user.languageCode,
       isPremium: user.isPremium,
       photoUrl: user.photoUrl,
-      lastLoginAt: user.lastLoginAt,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      lastLoginAt: user.lastLoginAt?.toISOString(),
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString(),
     };
   }
 }

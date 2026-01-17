@@ -1,6 +1,8 @@
-export class UserEntity {
+import { User } from '@task-manager/types';
+
+export class UserEntity implements Omit<User, 'lastLoginAt' | 'createdAt' | 'updatedAt'> {
   constructor(
-    public readonly id: string, // telegramId используется как id
+    public readonly id: string,
     public readonly username: string,
     public readonly isActive: boolean = true,
     public readonly firstName?: string,
