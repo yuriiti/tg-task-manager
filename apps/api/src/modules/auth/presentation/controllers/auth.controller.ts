@@ -14,8 +14,6 @@ export class AuthController {
   async login(@Request() req: AuthenticatedRequest): Promise<AuthResult> {
     const authRequest: AuthRequest = {
       authorization: req.headers['authorization'],
-      body: req.body,
-      headers: req.headers,
       ...req,
     };
 

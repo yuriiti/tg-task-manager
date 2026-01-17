@@ -1,4 +1,5 @@
 import type { AuthResult } from '@task-manager/types';
+import type { IncomingHttpHeaders } from 'http';
 
 /**
  * Authentication request data extracted from HTTP request
@@ -6,7 +7,7 @@ import type { AuthResult } from '@task-manager/types';
 export interface AuthRequest {
   authorization?: string;
   body?: any;
-  headers?: Record<string, string>;
+  headers?: IncomingHttpHeaders;
   [key: string]: any;
 }
 
