@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 import { UserService } from '../../application/services/user.service';
 import { CreateUserDto, UserResponseDto } from '../../application/dto';
 import { UserEntity } from '../../domain/entities/user.entity';
@@ -28,7 +29,7 @@ export class UserController {
   }
 
   private toResponseDto(user: UserEntity): UserResponseDto {
-    return {
+    const dto = {
       id: user.id,
       username: user.username,
       isActive: user.isActive,
@@ -41,5 +42,7 @@ export class UserController {
       createdAt: user.createdAt.toISOString(),
       updatedAt: user.updatedAt.toISOString(),
     };
+
+    return plainToInstance(UserResponseDto, dto);
   }
 }

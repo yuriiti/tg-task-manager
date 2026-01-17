@@ -1,1 +1,1 @@
-// Common interceptors will be exported here
+export * from './response-validation.interceptor';

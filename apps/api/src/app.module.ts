@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { databaseConfig } from './config/database.config';
@@ -8,6 +8,7 @@ import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { TmaAuthGuard } from './modules/auth/presentation/guards/tma-auth.guard';
+import { ResponseValidationInterceptor } from './common/interceptors';
 
 @Module({
   imports: [
@@ -35,6 +36,10 @@ import { TmaAuthGuard } from './modules/auth/presentation/guards/tma-auth.guard'
     {
       provide: APP_GUARD,
       useClass: TmaAuthGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseValidationInterceptor,
     },
   ],
 })
