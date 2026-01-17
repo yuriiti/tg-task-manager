@@ -1,5 +1,9 @@
 import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
-import { IAuthStrategy, AuthResult, AuthRequest } from '../../domain/interfaces/auth-strategy.interface';
+import {
+  IAuthStrategy,
+  AuthResult,
+  AuthRequest,
+} from '../../domain/interfaces/auth-strategy.interface';
 import { UserService } from '../../../user/application/services/user.service';
 
 /**
@@ -14,17 +18,19 @@ export class MockTmaAuthStrategy implements IAuthStrategy {
 
   canHandle(request: AuthRequest): boolean {
     const authHeader = request.authorization || request.headers?.['authorization'];
+
     // For mock strategy, always return true to allow usage even without header
     // This enables testing/development scenarios
     if (!authHeader) {
-      return true;
+      return false;
     }
+
     return authHeader.startsWith('mock-tma ');
   }
 
   extractAuthData(request: AuthRequest): string | null {
     const authHeader = request.authorization || request.headers?.['authorization'];
-    
+
     if (!authHeader) {
       // Try to get from body as fallback
       if (request.body?.initData) {

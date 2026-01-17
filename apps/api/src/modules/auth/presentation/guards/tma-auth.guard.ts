@@ -20,7 +20,7 @@ export class TmaAuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    
+
     const authRequest: AuthRequest = {
       authorization: request.headers['authorization'],
       body: request.body,
@@ -30,8 +30,7 @@ export class TmaAuthGuard implements CanActivate {
 
     try {
       // Use TMA strategy specifically
-      // const authResult = await this.authService.authenticateWithStrategy('TMA', authRequest);
-      const authResult = await this.authService.authenticateWithStrategy('MOCK_TMA', authRequest); // TODO: remove this
+      const authResult = await this.authService.authenticate(authRequest);
 
       // Attach user to request
       request.user = authResult.user;
