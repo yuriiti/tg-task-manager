@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { HomeOutlined, UserOutlined } from '@ant-design/icons';
+import { HomeOutlined, UserOutlined, TeamOutlined } from '@ant-design/icons';
 import { Button, Layout } from 'antd';
 
 const { Footer } = Layout;
@@ -12,6 +12,9 @@ export const BottomNavbar: React.FC = () => {
   const isActive = (path: string) => {
     if (path === '/home') {
       return location.pathname === '/' || location.pathname === '/home';
+    }
+    if (path === '/workspaces') {
+      return location.pathname.startsWith('/workspaces');
     }
     return location.pathname === path;
   };
@@ -46,6 +49,20 @@ export const BottomNavbar: React.FC = () => {
         }}
       >
         Home
+      </Button>
+      <Button
+        type={isActive('/workspaces') ? 'primary' : 'text'}
+        icon={<TeamOutlined />}
+        onClick={() => navigate('/workspaces')}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          height: 'auto',
+          padding: '8px 24px',
+        }}
+      >
+        Workspaces
       </Button>
       <Button
         type={isActive('/profile') ? 'primary' : 'text'}

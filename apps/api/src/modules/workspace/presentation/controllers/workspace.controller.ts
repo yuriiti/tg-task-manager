@@ -31,6 +31,13 @@ export class WorkspaceController {
     private readonly workspaceEventService: WorkspaceEventService,
   ) {}
 
+  @Get()
+  async findAll(@Request() req: AuthenticatedRequest): Promise<WorkspaceResponseDto[]> {
+    const userId = req.user.id; // MongoDB _id
+    const workspaces = await this.workspaceService.findAll(userId);
+    return workspaces.map((workspace) => this.toResponseDto(workspace));
+  }
+
   @Post()
   async create(
     @Body() createWorkspaceDto: CreateWorkspaceDto,

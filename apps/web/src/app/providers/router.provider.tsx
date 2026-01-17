@@ -6,6 +6,8 @@ import { LoginPage } from '../../pages/login';
 import { WelcomePage } from '../../pages/welcome';
 import { HomePage } from '../../pages/home';
 import { ProfilePage } from '../../pages/profile';
+import { WorkspacesPage } from '../../pages/workspaces';
+import { WorkspaceDetailPage } from '../../pages/workspace-detail';
 import { ProtectedRoute, WelcomeGuard } from './protected-route';
 
 export const RouterProvider: React.FC = () => {
@@ -47,6 +49,26 @@ export const RouterProvider: React.FC = () => {
             <ProtectedRoute>
               <TaskDetailPage />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/workspaces"
+          element={
+            <WelcomeGuard>
+              <ProtectedRoute>
+                <WorkspacesPage />
+              </ProtectedRoute>
+            </WelcomeGuard>
+          }
+        />
+        <Route
+          path="/workspaces/:id"
+          element={
+            <WelcomeGuard>
+              <ProtectedRoute>
+                <WorkspaceDetailPage />
+              </ProtectedRoute>
+            </WelcomeGuard>
           }
         />
         <Route

@@ -16,6 +16,14 @@ export class WorkspaceRepository implements IWorkspaceRepository {
     return workspace ? this.toDomain(workspace) : null;
   }
 
+  async findByUserId(userId: string): Promise<WorkspaceEntity[]> {
+    const userObjectId = new Types.ObjectId(userId);
+    const workspaces = await this.workspaceModel
+      .find({ participantIds: userObjectId })
+      .exec();
+    return workspaces.map((workspace) => this.toDomain(workspace));
+  }
+
   async create(workspace: WorkspaceEntity): Promise<WorkspaceEntity> {
     const participantObjectIds = workspace.participantIds.map(
       (id) => new Types.ObjectId(id),

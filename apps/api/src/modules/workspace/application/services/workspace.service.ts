@@ -30,6 +30,10 @@ export class WorkspaceService {
     return this.workspaceRepository.create(workspace);
   }
 
+  async findAll(userId: string): Promise<WorkspaceEntity[]> {
+    return this.workspaceRepository.findByUserId(userId);
+  }
+
   async findOne(id: string, userId: string): Promise<WorkspaceEntity> {
     const workspace = await this.workspaceRepository.findById(id);
 
