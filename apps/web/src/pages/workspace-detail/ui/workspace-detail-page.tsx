@@ -84,7 +84,7 @@ export const WorkspaceDetailPage: React.FC = () => {
     <AppLayout>
       <Header />
       <div style={{ padding: '16px' }}>
-        <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        <Space orientation="vertical" size="large" style={{ width: '100%' }}>
           <Space>
             <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/workspaces')}>
               Back
@@ -134,7 +134,7 @@ export const WorkspaceDetailPage: React.FC = () => {
                 </Form.Item>
               </Form>
             ) : (
-              <Descriptions title="Workspace Details" bordered>
+              <Descriptions title="Workspace Details" bordered column={3}>
                 <Descriptions.Item label="Name" span={3}>
                   <Title level={4} style={{ margin: 0 }}>
                     {workspace.name}

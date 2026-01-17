@@ -450,7 +450,7 @@ import { Flex } from 'antd';
 ```tsx
 import { Space } from 'antd';
 
-<Space direction="vertical" align="center" size={4}>
+<Space orientation="vertical" align="center" size={4}>
   <Typography.Title>First Name</Typography.Title>
   <Typography.Text type="secondary">Last Name</Typography.Text>
 </Space>
@@ -486,7 +486,7 @@ const { Title, Text, Paragraph } = Typography;
 ```tsx
 <Flex vertical align="center" gap={24}>
   <Avatar size={120} />
-  <Space direction="vertical" align="center" size={4}>
+  <Space orientation="vertical" align="center" size={4}>
     <Title level={2}>Name</Title>
     <Text type="secondary">Last Name</Text>
   </Space>
@@ -514,3 +514,42 @@ import {
 ### Кастомизация
 
 Для глобальной кастомизации Ant Design используется `ConfigProvider` в `app/providers/antd.provider.tsx`. Для локальной кастомизации используйте пропсы компонентов или темы Ant Design.
+
+### Деприкейтед API (НЕ ИСПОЛЬЗОВАТЬ)
+
+⚠️ **ВАЖНО**: В проекте запрещено использовать устаревшие (deprecated) API Ant Design. При обновлении библиотеки эти API могут быть удалены, что приведет к поломке приложения.
+
+#### Запрещенные API и их замены:
+
+1. **`Space` компонент - `direction` проп**
+   - ❌ **НЕ ИСПОЛЬЗОВАТЬ**: `<Space direction="vertical">`
+   - ✅ **ИСПОЛЬЗОВАТЬ**: `<Space orientation="vertical">`
+   - Причина: `direction` устарел в Ant Design 5+, заменен на `orientation`
+
+2. **`Card` компонент - `bodyStyle` проп**
+   - ❌ **НЕ ИСПОЛЬЗОВАТЬ**: `<Card bodyStyle={{ padding: '12px' }}>`
+   - ✅ **ИСПОЛЬЗОВАТЬ**: `<Card styles={{ body: { padding: '12px' } }}>`
+   - Причина: `bodyStyle` устарел в Ant Design 5+, заменен на `styles.body`
+
+3. **`Descriptions` компонент - `span` и `column`**
+   - ❌ **НЕ ИСПОЛЬЗОВАТЬ**: `<Descriptions>` без указания `column`, когда используется `span` в `Descriptions.Item`
+   - ✅ **ИСПОЛЬЗОВАТЬ**: Всегда указывать `column` проп в `Descriptions`, если используется `span` в элементах
+   - Пример:
+     ```tsx
+     <Descriptions column={3}>
+       <Descriptions.Item label="Name" span={3}>...</Descriptions.Item>
+     </Descriptions>
+     ```
+   - Причина: Сумма `span` в строке должна соответствовать `column` для корректного отображения
+
+#### Как проверить деприкейтед API:
+
+1. Запустите приложение и проверьте консоль браузера на наличие предупреждений
+2. Используйте линтер для проверки кода перед коммитом
+3. При обновлении Ant Design проверяйте changelog на наличие breaking changes
+
+#### При обнаружении деприкейтед API:
+
+1. Немедленно замените на актуальный API
+2. Проверьте все места использования в проекте через поиск
+3. Обновите документацию, если необходимо

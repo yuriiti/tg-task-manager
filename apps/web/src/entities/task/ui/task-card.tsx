@@ -24,9 +24,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onClick }) => {
       hoverable
       onClick={onClick}
       style={{ cursor: onClick ? 'pointer' : 'default' }}
-      bodyStyle={{ padding: '12px 16px' }}
+      styles={{ body: { padding: '12px 16px' } }}
     >
-      <Space direction="vertical" size="small" style={{ width: '100%' }}>
+      <Space orientation="vertical" size="small" style={{ width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <Title level={5} style={{ margin: 0, flex: 1 }}>
             {task.title}

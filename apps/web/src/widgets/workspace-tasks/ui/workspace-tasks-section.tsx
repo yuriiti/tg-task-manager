@@ -43,7 +43,7 @@ export const WorkspaceTasksSection: React.FC<WorkspaceTasksSectionProps> = ({
 
   if (tasks.length === 0) {
     return (
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+      <Space orientation="vertical" size="large" style={{ width: '100%' }}>
         <Title level={4}>Tasks</Title>
         <Empty description="No tasks in this workspace" />
       </Space>
@@ -51,9 +51,9 @@ export const WorkspaceTasksSection: React.FC<WorkspaceTasksSectionProps> = ({
   }
 
   return (
-    <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+    <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
       <Title level={4}>Tasks</Title>
-      <Space direction="vertical" size="small" style={{ width: '100%' }}>
+      <Space orientation="vertical" size="small" style={{ width: '100%' }}>
         {tasks.map((task) => (
           <SwipeableTaskCard
             key={task.id}
