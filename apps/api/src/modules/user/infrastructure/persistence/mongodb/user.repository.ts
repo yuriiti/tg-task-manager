@@ -12,8 +12,8 @@ export class UserRepository implements IUserRepository {
   ) {}
 
   async findById(id: string): Promise<UserEntity | null> {
-    // id is telegramId, used as _id in MongoDB
-    const user = await this.userModel.findById(id).exec();
+    // id is telegramId, search by id field
+    const user = await this.userModel.findOne({ id }).exec();
     return user ? this.toDomain(user) : null;
   }
 
@@ -24,7 +24,7 @@ export class UserRepository implements IUserRepository {
 
   async create(user: UserEntity): Promise<UserEntity> {
     const createdUser = new this.userModel({
-      _id: user.id, // telegramId используется как _id
+      id: user.id, // telegramId используется как id
       username: user.username,
       isActive: user.isActive,
       firstName: user.firstName,
@@ -41,20 +41,20 @@ export class UserRepository implements IUserRepository {
 
   async update(id: string, user: Partial<UserEntity>): Promise<UserEntity | null> {
     const updated = await this.userModel
-      .findByIdAndUpdate(id, { ...user, updatedAt: new Date() }, { new: true })
+      .findOneAndUpdate({ id }, { ...user, updatedAt: new Date() }, { new: true })
       .exec();
 
     return updated ? this.toDomain(updated) : null;
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await this.userModel.findByIdAndDelete(id).exec();
+    const result = await this.userModel.findOneAndDelete({ id }).exec();
     return !!result;
   }
 
   private toDomain(user: UserDocument): UserEntity {
     return new UserEntity(
-      user._id.toString(), // _id = telegramId
+      user.id, // id = telegramId
       user.username,
       user.isActive,
       user.firstName,

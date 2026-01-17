@@ -1,4 +1,3 @@
-import { ExecutionContext } from '@nestjs/common';
 
 /**
  * Result of authentication process

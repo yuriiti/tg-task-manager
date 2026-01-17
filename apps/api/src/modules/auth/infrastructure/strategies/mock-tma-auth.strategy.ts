@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
 import { IAuthStrategy, AuthResult, AuthRequest } from '../../domain/interfaces/auth-strategy.interface';
 import { UserService } from '../../../user/application/services/user.service';
 
@@ -14,7 +14,12 @@ export class MockTmaAuthStrategy implements IAuthStrategy {
 
   canHandle(request: AuthRequest): boolean {
     const authHeader = request.authorization || request.headers?.['authorization'];
-    return !!authHeader && authHeader.startsWith('mock-tma ');
+    // For mock strategy, always return true to allow usage even without header
+    // This enables testing/development scenarios
+    if (!authHeader) {
+      return true;
+    }
+    return authHeader.startsWith('mock-tma ');
   }
 
   extractAuthData(request: AuthRequest): string | null {
@@ -25,11 +30,15 @@ export class MockTmaAuthStrategy implements IAuthStrategy {
       if (request.body?.initData) {
         return request.body.initData;
       }
-      return null;
+      // For mock strategy, return a non-empty string to pass validation
+      // Empty string will be handled in validate() with default values
+      return 'mock';
     }
 
     if (!authHeader.startsWith('mock-tma ')) {
-      return null;
+      // For mock strategy, return a non-empty string to pass validation
+      // Empty string will be handled in validate() with default values
+      return 'mock';
     }
 
     // Extract the data after "mock-tma " prefix
@@ -48,15 +57,30 @@ export class MockTmaAuthStrategy implements IAuthStrategy {
 
     if (!user) {
       // Create new user from mock data
-      user = await this.userService.create({
-        id: mockTelegramId,
-        username: mockUsername,
-        firstName: mockFirstName,
-        lastName: mockLastName,
-        languageCode: 'en',
-        isPremium: false,
-      });
-    } else {
+      // Handle ConflictException in case user was created between findOne and create
+      try {
+        user = await this.userService.create({
+          id: mockTelegramId,
+          username: mockUsername,
+          firstName: mockFirstName,
+          lastName: mockLastName,
+          languageCode: 'en',
+          isPremium: false,
+        });
+      } catch (error) {
+        if (error instanceof ConflictException) {
+          // User was created between findOne and create, fetch it again
+          user = await this.userService.findOne(mockTelegramId).catch(() => null);
+          if (!user) {
+            throw new UnauthorizedException('Failed to create or find user');
+          }
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    if (user) {
       // Update user data if needed
       const updateData: any = {};
       if (mockFirstName && user.firstName !== mockFirstName) {
@@ -72,6 +96,10 @@ export class MockTmaAuthStrategy implements IAuthStrategy {
       if (Object.keys(updateData).length > 0) {
         user = await this.userService.update(user.id, updateData);
       }
+    }
+
+    if (!user) {
+      throw new UnauthorizedException('Failed to authenticate: user not found or created');
     }
 
     return {

@@ -39,5 +39,6 @@ export class User {
 export const UserSchema = SchemaFactory.createForClass(User);
 
 // Indexes
+UserSchema.index({ id: 1 }, { unique: true });
 UserSchema.index({ username: 1 });
 UserSchema.index({ createdAt: 1 });
