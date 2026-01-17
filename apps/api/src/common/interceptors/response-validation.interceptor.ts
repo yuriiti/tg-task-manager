@@ -31,15 +31,15 @@ export class ResponseValidationInterceptor implements NestInterceptor {
 
         // Если это массив, проверяем первый элемент для определения типа
         if (Array.isArray(data) && data.length > 0) {
-          // Пытаемся определить тип из метаданных или из самого объекта
-          const firstItem = data[0];
-          if (firstItem && typeof firstItem === 'object') {
-            // Если все элементы массива одного типа, валидируем каждый
+          // Если returnType валиден и это не Array, валидируем каждый элемент
+          if (returnType && typeof returnType === 'function' && returnType !== Array) {
             const validatedArray = await Promise.all(
               data.map((item) => this.validateResponse(item, returnType)),
             );
             return validatedArray;
           }
+          // Если тип элемента недоступен, возвращаем массив как есть
+          return data;
         }
 
         return data;
@@ -48,6 +48,11 @@ export class ResponseValidationInterceptor implements NestInterceptor {
   }
 
   private async validateResponse(data: any, DtoClass: any): Promise<any> {
+    // Если DtoClass не является валидным конструктором, возвращаем data как есть
+    if (!DtoClass || typeof DtoClass !== 'function') {
+      return data;
+    }
+
     // Если data уже является экземпляром нужного класса, валидируем его
     if (data instanceof DtoClass) {
       const errors = await validate(data);
