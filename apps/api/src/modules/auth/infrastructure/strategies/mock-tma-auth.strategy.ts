@@ -111,8 +111,10 @@ export class MockTmaAuthStrategy implements IAuthStrategy {
     return {
       user: {
         id: user.id,
-        userId: user.id,
         username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        photoUrl: user.photoUrl,
       },
       metadata: {
         telegramUser: {

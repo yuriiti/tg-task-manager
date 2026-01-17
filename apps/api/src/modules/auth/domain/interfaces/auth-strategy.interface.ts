@@ -1,18 +1,4 @@
-
-/**
- * Result of authentication process
- */
-export interface AuthResult {
-  user: {
-    id: string;
-    userId: string;
-    telegramId?: string;
-    email?: string;
-    username: string;
-    [key: string]: any;
-  };
-  metadata?: Record<string, any>;
-}
+import type { AuthResult } from '@task-manager/types';
 
 /**
  * Authentication request data extracted from HTTP request
@@ -56,3 +42,5 @@ export interface IAuthStrategy {
    */
   canHandle(request: AuthRequest): boolean;
 }
+
+export type { AuthResult };

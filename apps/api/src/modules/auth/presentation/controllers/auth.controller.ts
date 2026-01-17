@@ -1,6 +1,6 @@
 import { Controller, Post, Request } from '@nestjs/common';
 import { AuthService } from '../../application/services/auth.service';
-import { AuthRequest } from '../../domain/interfaces/auth-strategy.interface';
+import { AuthRequest, AuthResult } from '../../domain/interfaces/auth-strategy.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -10,7 +10,7 @@ export class AuthController {
    * Generic login endpoint that uses the appropriate strategy
    */
   @Post('login')
-  async login(@Request() req: any) {
+  async login(@Request() req: any): Promise<AuthResult> {
     const authRequest: AuthRequest = {
       authorization: req.headers['authorization'],
       body: req.body,
@@ -20,5 +20,4 @@ export class AuthController {
 
     return this.authService.authenticate(authRequest);
   }
-
 }

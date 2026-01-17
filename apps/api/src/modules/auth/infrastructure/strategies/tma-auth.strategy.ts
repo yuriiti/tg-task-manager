@@ -1,6 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IAuthStrategy, AuthResult, AuthRequest } from '../../domain/interfaces/auth-strategy.interface';
+import {
+  IAuthStrategy,
+  AuthResult,
+  AuthRequest,
+} from '../../domain/interfaces/auth-strategy.interface';
 import { TmaValidationService } from '../services/tma-validation.service';
 import { UserService } from '../../../user/application/services/user.service';
 
@@ -21,7 +25,7 @@ export class TmaAuthStrategy implements IAuthStrategy {
 
   extractAuthData(request: AuthRequest): string | null {
     const authHeader = request.authorization || request.headers?.['authorization'];
-    
+
     if (!authHeader) {
       // Try to get from body as fallback
       if (request.body?.initData) {
@@ -39,7 +43,7 @@ export class TmaAuthStrategy implements IAuthStrategy {
 
   async validate(authData: string): Promise<AuthResult> {
     const botToken = this.configService.get<string>('BOT_TOKEN');
-    
+
     if (!botToken) {
       throw new UnauthorizedException('Bot token is not configured');
     }
@@ -87,8 +91,10 @@ export class TmaAuthStrategy implements IAuthStrategy {
     return {
       user: {
         id: user.id,
-        userId: user.id,
         username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        photoUrl: user.photoUrl,
       },
       metadata: {
         telegramUser: validatedData.user,
