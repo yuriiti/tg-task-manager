@@ -1,5 +1,6 @@
 import { Injectable, ConflictException, NotFoundException, Inject } from '@nestjs/common';
 import { IUserRepository } from '../../domain/interfaces/user.repository.interface';
+import { USER_REPOSITORY_TOKEN } from '../../domain/interfaces/user.repository.token';
 import { UserEntity } from '../../domain/entities/user.entity';
 
 export interface CreateUserData {
@@ -15,7 +16,7 @@ export interface CreateUserData {
 @Injectable()
 export class UserService {
   constructor(
-    @Inject('IUserRepository') private readonly userRepository: IUserRepository,
+    @Inject(USER_REPOSITORY_TOKEN) private readonly userRepository: IUserRepository,
   ) {}
 
   async create(data: CreateUserData): Promise<UserEntity> {

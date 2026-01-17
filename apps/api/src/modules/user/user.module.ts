@@ -4,7 +4,7 @@ import { UserController } from './presentation/controllers/user.controller';
 import { UserService } from './application/services/user.service';
 import { UserRepository } from './infrastructure/persistence/mongodb/user.repository';
 import { User, UserSchema } from './infrastructure/persistence/mongodb/user.schema';
-import { IUserRepository } from './domain/interfaces/user.repository.interface';
+import { USER_REPOSITORY_TOKEN } from './domain/interfaces/user.repository.token';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { IUserRepository } from './domain/interfaces/user.repository.interface';
     UserService,
     UserRepository,
     {
-      provide: 'IUserRepository',
+      provide: USER_REPOSITORY_TOKEN,
       useClass: UserRepository,
     },
   ],
