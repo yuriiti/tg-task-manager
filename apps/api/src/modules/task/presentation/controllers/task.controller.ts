@@ -9,6 +9,7 @@ import {
   Request,
   UnauthorizedException,
   Sse,
+  Query,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { TaskService } from '../../application/services/task.service';
@@ -31,15 +32,18 @@ export class TaskController {
   ): Promise<TaskResponseDto> {
     const userId = req.user.id; // MongoDB _id
 
-    const task = await this.taskService.create(userId, createTaskDto);
+    const task = await this.taskService.create(userId, createTaskDto, createTaskDto.workspaceId);
     return this.toResponseDto(task);
   }
 
   @Get()
-  async findAll(@Request() req: AuthenticatedRequest): Promise<TaskResponseDto[]> {
+  async findAll(
+    @Request() req: AuthenticatedRequest,
+    @Query('workspaceId') workspaceId?: string,
+  ): Promise<TaskResponseDto[]> {
     const userId = req.user.id; // MongoDB _id
 
-    const tasks = await this.taskService.findAll(userId);
+    const tasks = await this.taskService.findAll(userId, { workspaceId });
     return tasks.map((task) => this.toResponseDto(task));
   }
 

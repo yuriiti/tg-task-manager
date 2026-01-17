@@ -34,6 +34,10 @@ export class TaskRepository implements ITaskRepository {
       query.tags = { $in: params.tags };
     }
 
+    if (params?.workspaceId) {
+      query.workspaceId = new Types.ObjectId(params.workspaceId);
+    }
+
     const sort: any = {};
     if (params?.sortBy) {
       sort[params.sortBy] = params.sortOrder === 'desc' ? -1 : 1;

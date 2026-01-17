@@ -32,6 +32,7 @@ export interface CreateTaskDto {
   priority?: TaskPriority;
   dueDate?: Date | string;
   tags?: string[];
+  workspaceId?: string;
 }
 
 export interface UpdateTaskDto {
@@ -47,6 +48,7 @@ export interface TaskQueryParams {
   status?: TaskStatus;
   priority?: TaskPriority;
   tags?: string[];
+  workspaceId?: string;
   page?: number;
   limit?: number;
   sortBy?: "createdAt" | "dueDate" | "priority";

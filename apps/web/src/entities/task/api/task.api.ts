@@ -2,8 +2,9 @@ import { apiClient } from '../../../shared/api/client';
 import { Task, CreateTaskDto, UpdateTaskDto } from '@task-manager/types';
 
 export const taskApi = {
-  getTasks: async (): Promise<Task[]> => {
-    const response = await apiClient.get('/tasks');
+  getTasks: async (workspaceId?: string): Promise<Task[]> => {
+    const params = workspaceId ? { workspaceId } : {};
+    const response = await apiClient.get('/tasks', { params });
     return response.data;
   },
 

@@ -5,6 +5,7 @@ import { QueryProvider } from './providers/query.provider';
 import { AntdProvider } from './providers/antd.provider';
 import { AuthProvider } from './providers/auth.provider';
 import { WorkspaceSSEProvider } from './providers/workspace-sse.provider';
+import { TaskSSEProvider } from './providers/task-sse.provider';
 import { initializeTelegramSDK } from '../shared/lib/telegram/telegram-sdk';
 import './styles/index.css';
 
@@ -19,7 +20,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <AntdProvider>
         <AuthProvider>
           <WorkspaceSSEProvider>
-            <RouterProvider />
+            <TaskSSEProvider>
+              <RouterProvider />
+            </TaskSSEProvider>
           </WorkspaceSSEProvider>
         </AuthProvider>
       </AntdProvider>
