@@ -1,0 +1,47 @@
+# Cursor Rules для Task Manager
+
+## Общее правило
+
+**Всегда следуй документации из папки `./docs`** при реализации функционала. При изменении архитектуры обновляй соответствующую документацию.
+
+## Ссылки на документацию по ситуациям
+
+### Работа с монорепозиторием
+→ См. `./docs/01-monorepo-structure.md`
+- Настройка Turbo
+- Структура apps и packages
+- Управление зависимостями
+
+### Настройка Docker окружения
+→ См. `./docs/02-docker-setup.md`
+- docker-compose конфигурация
+- Hot reload для разработки
+- Управление сервисами
+
+### Работа с MongoDB
+→ См. `./docs/03-mongodb-setup.md`
+- Схемы данных
+- Индексы
+- Миграции
+- Оптимизация запросов
+
+### Работа с Redis
+→ См. `./docs/04-redis-setup.md`
+- Кэширование
+- Сессии
+- Rate limiting
+- Pub/Sub
+
+### Разработка Backend (NestJS)
+→ См. `./docs/05-nestjs-backend.md`
+- Модульная архитектура с DDD
+- Структура модулей (domain, application, infrastructure, presentation)
+- Создание новых модулей
+- Dependency Injection
+
+### Разработка Frontend (React + FSD)
+→ См. `./docs/06-react-frontend.md`
+- Feature-Sliced Design архитектура
+- Иерархия слоев FSD
+- Структура слайсов
+- State Management (TanStack Query, Zustand)

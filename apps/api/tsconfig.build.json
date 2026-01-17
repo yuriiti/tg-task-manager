@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@task-manager/types": ["../../packages/types/dist/index"],
+      "@task-manager/shared": ["../../packages/shared/dist/index"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "test",
+    "dist",
+    "**/*spec.ts",
+    ".prettierrc.mjs",
+    "eslint.config.mjs",
+    "jest.config.mjs",
+    "jest.config.ts"
+  ]
+}
