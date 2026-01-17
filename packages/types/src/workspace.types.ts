@@ -19,6 +19,8 @@ export interface InviteParticipantDto {
 }
 
 export enum WorkspaceEventType {
+  WORKSPACE_CREATED = 'workspace_created',
+  WORKSPACE_DELETED = 'workspace_deleted',
   NAME_UPDATED = 'name_updated',
   PARTICIPANT_ADDED = 'participant_added',
   PARTICIPANT_REMOVED = 'participant_removed',
@@ -28,6 +30,8 @@ export interface WorkspaceEvent {
   type: WorkspaceEventType;
   workspaceId: string;
   payload: {
+    workspace?: Workspace;
+    workspaceId?: string;
     name?: string;
     participantId?: string;
     participantIds?: string[];

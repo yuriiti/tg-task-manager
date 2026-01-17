@@ -4,6 +4,7 @@ import { RouterProvider } from './providers/router.provider';
 import { QueryProvider } from './providers/query.provider';
 import { AntdProvider } from './providers/antd.provider';
 import { AuthProvider } from './providers/auth.provider';
+import { WorkspaceSSEProvider } from './providers/workspace-sse.provider';
 import { initializeTelegramSDK } from '../shared/lib/telegram/telegram-sdk';
 import './styles/index.css';
 
@@ -17,7 +18,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <QueryProvider>
       <AntdProvider>
         <AuthProvider>
-          <RouterProvider />
+          <WorkspaceSSEProvider>
+            <RouterProvider />
+          </WorkspaceSSEProvider>
         </AuthProvider>
       </AntdProvider>
     </QueryProvider>

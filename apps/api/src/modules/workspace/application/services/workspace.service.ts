@@ -21,13 +21,22 @@ export class WorkspaceService {
   ) {}
 
   async create(userId: string, createWorkspaceDto: CreateWorkspaceDto): Promise<WorkspaceEntity> {
-    const workspace = new WorkspaceEntity(
-      '',
-      createWorkspaceDto.name,
-      [userId],
-    );
+    const workspace = new WorkspaceEntity('', createWorkspaceDto.name, [userId]);
 
-    return this.workspaceRepository.create(workspace);
+    const createdWorkspace = await this.workspaceRepository.create(workspace);
+
+    this.workspaceEventService.emitEventToUsers([userId], WorkspaceEventType.WORKSPACE_CREATED, {
+      workspace: {
+        id: createdWorkspace.id,
+        name: createdWorkspace.name,
+        participantIds: createdWorkspace.participantIds,
+        createdAt: createdWorkspace.createdAt,
+        updatedAt: createdWorkspace.updatedAt,
+      },
+      workspaceId: createdWorkspace.id,
+    });
+
+    return createdWorkspace;
   }
 
   async findAll(userId: string): Promise<WorkspaceEntity[]> {
@@ -65,9 +74,14 @@ export class WorkspaceService {
     }
 
     if (updateWorkspaceDto.name) {
-      this.workspaceEventService.emitEvent(id, WorkspaceEventType.NAME_UPDATED, {
-        name: updatedWorkspace.name,
-      });
+      this.workspaceEventService.emitEventToUsers(
+        updatedWorkspace.participantIds,
+        WorkspaceEventType.NAME_UPDATED,
+        {
+          workspaceId: id,
+          name: updatedWorkspace.name,
+        },
+      );
     }
 
     return updatedWorkspace;
@@ -76,9 +90,16 @@ export class WorkspaceService {
   async delete(id: string, userId: string): Promise<void> {
     const workspace = await this.findOne(id, userId);
 
+    this.workspaceEventService.emitEventToUsers(
+      workspace.participantIds,
+      WorkspaceEventType.WORKSPACE_DELETED,
+      {
+        workspaceId: id,
+      },
+    );
+
     await this.taskService.deleteByWorkspaceId(id);
     await this.workspaceRepository.delete(id);
-    this.workspaceEventService.removeStream(id);
   }
 
   async inviteParticipant(
@@ -102,10 +123,15 @@ export class WorkspaceService {
       throw new NotFoundException(`Workspace with ID ${workspaceId} not found`);
     }
 
-    this.workspaceEventService.emitEvent(workspaceId, WorkspaceEventType.PARTICIPANT_ADDED, {
-      participantId: inviteParticipantDto.userId,
-      participantIds: updatedParticipantIds,
-    });
+    this.workspaceEventService.emitEventToUsers(
+      updatedParticipantIds,
+      WorkspaceEventType.PARTICIPANT_ADDED,
+      {
+        workspaceId,
+        participantId: inviteParticipantDto.userId,
+        participantIds: updatedParticipantIds,
+      },
+    );
 
     return updatedWorkspace;
   }
@@ -121,9 +147,7 @@ export class WorkspaceService {
       throw new BadRequestException('User is not a participant of this workspace');
     }
 
-    const updatedParticipantIds = workspace.participantIds.filter(
-      (id) => id !== userIdToRemove,
-    );
+    const updatedParticipantIds = workspace.participantIds.filter((id) => id !== userIdToRemove);
     const updatedWorkspace = await this.workspaceRepository.update(workspaceId, {
       participantIds: updatedParticipantIds,
       updatedAt: new Date(),
@@ -133,10 +157,15 @@ export class WorkspaceService {
       throw new NotFoundException(`Workspace with ID ${workspaceId} not found`);
     }
 
-    this.workspaceEventService.emitEvent(workspaceId, WorkspaceEventType.PARTICIPANT_REMOVED, {
-      participantId: userIdToRemove,
-      participantIds: updatedParticipantIds,
-    });
+    this.workspaceEventService.emitEventToUsers(
+      updatedParticipantIds,
+      WorkspaceEventType.PARTICIPANT_REMOVED,
+      {
+        workspaceId,
+        participantId: userIdToRemove,
+        participantIds: updatedParticipantIds,
+      },
+    );
 
     return updatedWorkspace;
   }

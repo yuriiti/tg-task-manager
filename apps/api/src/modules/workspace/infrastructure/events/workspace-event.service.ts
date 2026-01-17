@@ -4,37 +4,41 @@ import { WorkspaceEventType, WorkspaceEvent } from '@task-manager/types';
 
 @Injectable()
 export class WorkspaceEventService {
-  private eventStreams: Map<string, Subject<MessageEvent>> = new Map();
+  private userEventStreams: Map<string, Subject<MessageEvent>> = new Map();
 
-  emitEvent(workspaceId: string, type: WorkspaceEventType, payload: any): void {
-    const stream = this.getOrCreateStream(workspaceId);
+  emitEventToUsers(userIds: string[], type: WorkspaceEventType, payload: any): void {
     const event: WorkspaceEvent = {
       type,
-      workspaceId,
+      workspaceId: payload.workspaceId || payload.workspace?.id || '',
       payload,
     };
 
-    stream.next({
+    const eventMessage: MessageEvent = {
       data: JSON.stringify(event),
-    } as MessageEvent);
+    } as MessageEvent;
+
+    userIds.forEach((userId) => {
+      const stream = this.getOrCreateStream(userId);
+      stream.next(eventMessage);
+    });
   }
 
-  getEventStream(workspaceId: string): Observable<MessageEvent> {
-    return this.getOrCreateStream(workspaceId).asObservable();
+  getEventStream(userId: string): Observable<MessageEvent> {
+    return this.getOrCreateStream(userId).asObservable();
   }
 
-  private getOrCreateStream(workspaceId: string): Subject<MessageEvent> {
-    if (!this.eventStreams.has(workspaceId)) {
-      this.eventStreams.set(workspaceId, new Subject<MessageEvent>());
+  private getOrCreateStream(userId: string): Subject<MessageEvent> {
+    if (!this.userEventStreams.has(userId)) {
+      this.userEventStreams.set(userId, new Subject<MessageEvent>());
     }
-    return this.eventStreams.get(workspaceId)!;
+    return this.userEventStreams.get(userId)!;
   }
 
-  removeStream(workspaceId: string): void {
-    const stream = this.eventStreams.get(workspaceId);
+  removeStream(userId: string): void {
+    const stream = this.userEventStreams.get(userId);
     if (stream) {
       stream.complete();
-      this.eventStreams.delete(workspaceId);
+      this.userEventStreams.delete(userId);
     }
   }
 }

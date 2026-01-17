@@ -48,6 +48,13 @@ export class WorkspaceController {
     return this.toResponseDto(workspace);
   }
 
+  @Get('sse')
+  @Sse()
+  workspaceSse(@Request() req: AuthenticatedRequest): Observable<MessageEvent> {
+    const userId = req.user.id; // MongoDB _id
+    return this.workspaceEventService.getEventStream(userId);
+  }
+
   @Get(':id')
   @UseGuards(WorkspaceMemberGuard)
   async findOne(
@@ -92,13 +99,6 @@ export class WorkspaceController {
       inviteParticipantDto,
     );
     return this.toResponseDto(workspace);
-  }
-
-  @Get(':id/sse')
-  @UseGuards(WorkspaceMemberGuard)
-  @Sse()
-  workspaceSse(@Param('id') id: string): Observable<MessageEvent> {
-    return this.workspaceEventService.getEventStream(id);
   }
 
   private toResponseDto(workspace: WorkspaceEntity): WorkspaceResponseDto {

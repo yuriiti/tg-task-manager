@@ -22,9 +22,15 @@ export class TmaAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
 
+    // Для SSE endpoint authorization может быть в query параметрах
+    let authorization = request.headers['authorization'] as string | undefined;
+    if (!authorization && request.query?.authorization) {
+      authorization = decodeURIComponent(request.query.authorization as string);
+    }
+
     const authRequest: AuthRequest = {
       ...request,
-      authorization: request.headers['authorization'] as string | undefined,
+      authorization,
       body: request.body,
       headers: request.headers as Record<string, string>,
     };

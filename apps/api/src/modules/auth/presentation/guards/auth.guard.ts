@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../../application/services/auth.service';
 import { AuthRequest } from '../../domain/interfaces/auth-strategy.interface';
 import { AuthenticatedRequest } from '../../../../common/types/request.types';
@@ -17,10 +12,16 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
-    
+
+    // Для SSE endpoint authorization может быть в query параметрах
+    let authorization = request.headers['authorization'] as string | undefined;
+    if (!authorization && request.query?.authorization) {
+      authorization = decodeURIComponent(request.query.authorization as string);
+    }
+
     const authRequest: AuthRequest = {
       ...request,
-      authorization: request.headers['authorization'] as string | undefined,
+      authorization,
       body: request.body,
       headers: request.headers as Record<string, string>,
     };
