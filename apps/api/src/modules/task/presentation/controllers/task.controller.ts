@@ -6,16 +6,13 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
   Request,
 } from '@nestjs/common';
 import { TaskService } from '../../application/services/task.service';
 import { CreateTaskDto, UpdateTaskDto, TaskResponseDto } from '../../application/dto';
 import { TaskEntity } from '../../domain/entities/task.entity';
-import { TmaAuthGuard } from '../../../auth/presentation/guards/tma-auth.guard';
 
 @Controller('tasks')
-@UseGuards(TmaAuthGuard)
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 

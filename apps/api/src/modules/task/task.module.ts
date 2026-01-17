@@ -6,7 +6,7 @@ import { TaskQueryService } from './application/services/task-query.service';
 import { TaskRepository } from './infrastructure/persistence/mongodb/task.repository';
 import { TaskCacheRepository } from './infrastructure/persistence/redis/task-cache.repository';
 import { Task, TaskSchema } from './infrastructure/persistence/mongodb/task.schema';
-import { ITaskRepository } from './domain/interfaces/task.repository.interface';
+// import { ITaskRepository } from './domain/interfaces/task.repository.interface';
 
 @Module({
   imports: [

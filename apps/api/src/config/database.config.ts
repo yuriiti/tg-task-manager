@@ -7,8 +7,11 @@ export const databaseConfig = () => {
   const authSource = process.env.MONGODB_AUTH_SOURCE || 'admin';
 
   if (user && password) {
+    // URL encode user and password to handle special characters
+    const encodedUser = encodeURIComponent(user);
+    const encodedPassword = encodeURIComponent(password);
     return {
-      uri: `mongodb://${user}:${password}@${host}:${port}/${database}?authSource=${authSource}`,
+      uri: `mongodb://${encodedUser}:${encodedPassword}@${host}:${port}/${database}?authSource=${authSource}`,
     };
   }
 

@@ -1,19 +1,33 @@
 // MongoDB initialization script
 // This script runs only on first container startup
 
-db = db.getSiblingDB('task_manager');
+// Switch to admin database to create user
+db = db.getSiblingDB('admin');
 
-// Create application user
-db.createUser({
-  user: 'task_manager_user',
-  pwd: 'task_manager_password',
-  roles: [
-    {
-      role: 'readWrite',
-      db: 'task_manager'
-    }
-  ]
-});
+// Create application user in admin database with permissions for task_manager
+try {
+  db.createUser({
+    user: 'task_manager_user',
+    pwd: 'task_manager_password',
+    roles: [
+      {
+        role: 'readWrite',
+        db: 'task_manager'
+      }
+    ]
+  });
+  print('User task_manager_user created successfully');
+} catch (error) {
+  if (error.code === 51003) {
+    // User already exists
+    print('User task_manager_user already exists, skipping creation');
+  } else {
+    throw error;
+  }
+}
+
+// Switch to task_manager database
+db = db.getSiblingDB('task_manager');
 
 // Create collections
 db.createCollection('users');

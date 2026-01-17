@@ -9,7 +9,7 @@ export type UserDocument = User & Document & {
 @Schema({ timestamps: true })
 export class User {
   @Prop({ required: true, unique: true })
-  _id: string; // telegramId используется как _id
+  id: string; // telegramId используется как _id
 
   @Prop({ required: true })
   username: string;
