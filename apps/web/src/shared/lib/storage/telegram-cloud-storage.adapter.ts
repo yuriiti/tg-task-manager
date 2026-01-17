@@ -16,7 +16,7 @@ export class TelegramCloudStorageAdapter implements IStorage {
     }
 
     try {
-      await cloudStorage.set(key, value);
+      await cloudStorage.setItem(key, value);
     } catch (error) {
       console.error('Telegram CloudStorage setItem error:', error);
       throw error;
@@ -34,7 +34,7 @@ export class TelegramCloudStorageAdapter implements IStorage {
     }
 
     try {
-      const result = await cloudStorage.get(key);
+      const result = await cloudStorage.getItem(key);
       return result || null;
     } catch (error) {
       console.error('Telegram CloudStorage getItem error:', error);
@@ -53,7 +53,7 @@ export class TelegramCloudStorageAdapter implements IStorage {
     }
 
     try {
-      await cloudStorage.delete(key);
+      await cloudStorage.deleteItem(key);
     } catch (error) {
       console.error('Telegram CloudStorage removeItem error:', error);
     }

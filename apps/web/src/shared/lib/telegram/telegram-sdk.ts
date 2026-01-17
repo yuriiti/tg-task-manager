@@ -1,8 +1,7 @@
-import { initCloudStorage, retrieveLaunchParams } from '@tma.js/sdk';
+import { init, cloudStorage, retrieveLaunchParams } from '@tma.js/sdk-react';
 
 let sdkInitialized = false;
 let initDataRaw: string | null = null;
-let cloudStorageInstance: ReturnType<typeof initCloudStorage> | null = null;
 
 /**
  * Инициализация Telegram SDK
@@ -13,11 +12,16 @@ export function initializeTelegramSDK(): boolean {
   }
 
   try {
+    // Инициализация пакета @tma.js/sdk-react
+    init();
+
     const launchParams = retrieveLaunchParams();
 
     if (launchParams.initDataRaw) {
-      initDataRaw = launchParams.initDataRaw;
-      cloudStorageInstance = initCloudStorage();
+      initDataRaw =
+        typeof launchParams.initDataRaw === 'string'
+          ? launchParams.initDataRaw
+          : String(launchParams.initDataRaw);
       sdkInitialized = true;
       return true;
     }
@@ -43,12 +47,12 @@ export function getInitData(): string | null {
 /**
  * Получить CloudStorage из SDK
  */
-export function getCloudStorage(): ReturnType<typeof initCloudStorage> | null {
+export function getCloudStorage(): typeof cloudStorage | null {
   if (!sdkInitialized) {
     initializeTelegramSDK();
   }
 
-  return cloudStorageInstance;
+  return cloudStorage.isSupported() ? cloudStorage : null;
 }
 
 /**
@@ -65,7 +69,7 @@ export function isTelegramSDKAvailable(): boolean {
  * Проверить, доступен ли CloudStorage
  */
 export function isCloudStorageAvailable(): boolean {
-  return isTelegramSDKAvailable() && cloudStorageInstance !== null;
+  return isTelegramSDKAvailable() && cloudStorage.isSupported();
 }
 
 // Инициализация при импорте модуля

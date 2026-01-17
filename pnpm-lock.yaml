@@ -108,9 +108,9 @@ importers:
       '@task-manager/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@tma.js/sdk':
-        specifier: ^3.1.6
-        version: 3.1.6(typescript@5.9.3)
+      '@tma.js/sdk-react':
+        specifier: ^3.0.15
+        version: 3.0.15(@types/react@19.2.8)(react@19.2.3)(typescript@5.9.3)
       antd:
         specifier: ^6.2.0
         version: 6.2.0(react-dom@19.2.3)(react@19.2.3)
@@ -2241,6 +2241,22 @@ packages:
       fp-ts: 2.16.11
       mitt: 3.0.1
       valibot: 1.2.0(typescript@5.9.3)
+    transitivePeerDependencies:
+      - typescript
+    dev: false
+
+  /@tma.js/sdk-react@3.0.15(@types/react@19.2.8)(react@19.2.3)(typescript@5.9.3):
+    resolution: {integrity: sha512-HsgqPINSBK87NIRZ+ZDol07QPhSQ3GOTofyZEH0xoaQjZWb9wVxUXwECa5ozRUdzWZI+Mgx8oD1pzrjyNkDjFA==}
+    peerDependencies:
+      '@types/react': ^17.0.0 || ^18.0.0 || ^19.0.0
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@tma.js/sdk': 3.1.6(typescript@5.9.3)
+      '@types/react': 19.2.8
+      react: 19.2.3
     transitivePeerDependencies:
       - typescript
     dev: false
