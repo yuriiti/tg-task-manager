@@ -1,15 +1,15 @@
 export enum TaskStatus {
-  TODO = 'todo',
-  IN_PROGRESS = 'in_progress',
-  DONE = 'done',
-  CANCELLED = 'cancelled',
+  TODO = "todo",
+  IN_PROGRESS = "in_progress",
+  DONE = "done",
+  CANCELLED = "cancelled",
 }
 
 export enum TaskPriority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  URGENT = 'urgent',
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  URGENT = "urgent",
 }
 
 export interface Task {
@@ -49,6 +49,6 @@ export interface TaskQueryParams {
   tags?: string[];
   page?: number;
   limit?: number;
-  sortBy?: 'createdAt' | 'dueDate' | 'priority';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: "createdAt" | "dueDate" | "priority";
+  sortOrder?: "asc" | "desc";
 }

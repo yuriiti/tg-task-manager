@@ -19,8 +19,8 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@task-manager/types": ["../../packages/types/dist/index"],
-      "@task-manager/shared": ["../../packages/shared/dist/index"]
+      "@task-manager/types": ["../../packages/types/src/index"],
+      "@task-manager/shared": ["../../packages/shared/src/index"]
     }
   },
   "include": ["src/**/*"],
