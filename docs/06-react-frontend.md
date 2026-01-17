@@ -186,10 +186,14 @@ apps/web/
 - **Zustand** - state management (в entities/model)
 - **React Router** - навигация
 - **Axios** - HTTP запросы (в shared/api)
+- **@tma.js/sdk** - для работы с Telegram Mini App API
 - **Vite** - build tool
 
 ## Основные фичи
 
+- **Авторизация через Telegram Mini App** (app/providers/auth.provider)
+- **Welcome страница** (pages/welcome) - показывается один раз при первом запуске
+- **Home страница** (pages/home) - главная страница после Welcome
 - **Список задач** (widgets/task-list)
 - **Создание задачи** (features/create-task)
 - **Редактирование задачи** (features/edit-task)
@@ -222,3 +226,183 @@ apps/web/
 - **lib/** - утилиты
 - **config/** - конфигурация
 - **index.ts** - публичный API слайса
+
+## Авторизация
+
+### Архитектура авторизации
+
+Приложение использует **stateless авторизацию** через Telegram Mini App initData:
+
+- **Нет токенов**: Авторизация происходит через initData в заголовке каждого запроса
+- **`/auth/login` endpoint**: Возвращает `AuthResult` (информацию о пользователе) из `@task-manager/types`
+- **Автоматическая авторизация**: При старте приложения выполняется автоматический login
+- **Dev режим**: Используется mock initData для локальной разработки
+
+### Компоненты авторизации
+
+#### AuthProvider (`app/providers/auth.provider.tsx`)
+
+Провайдер для управления состоянием авторизации:
+
+- Автоматически выполняет login при монтировании
+- Сохраняет информацию о пользователе в состоянии
+- Предоставляет контекст через `useAuth()` hook
+- Интегрирован с React Query для выполнения запросов
+
+**Использование:**
+```tsx
+import { useAuth } from '@/app/providers/auth.provider';
+
+function MyComponent() {
+  const { user, isAuthenticated, isLoading } = useAuth();
+  // ...
+}
+```
+
+#### Login Mutation (`entities/user/model/user.mutations.ts`)
+
+React Query mutation для авторизации:
+
+- Получает initData через `@tma.js/sdk` или mock в dev режиме
+- Отправляет запрос на `/auth/login` с initData в заголовке
+- Возвращает `AuthResult` с информацией о пользователе
+
+#### API Client (`shared/api/client.ts`)
+
+Axios клиент с автоматическим добавлением initData:
+
+- Добавляет initData в заголовок `Authorization: TMA <initData>` при каждом запросе
+- В dev режиме использует mock: `Authorization: mock-tma <mockData>`
+- Обрабатывает 401 ошибки (редирект на login)
+
+### Защищенные роуты
+
+Используются компоненты `ProtectedRoute` и `WelcomeGuard`:
+
+- **ProtectedRoute**: Проверяет авторизацию, редиректит на `/login` если не авторизован
+- **WelcomeGuard**: Проверяет, показывалась ли Welcome страница, редиректит на `/welcome` если нет
+
+## ClientStorage (DDD подход)
+
+### Архитектура
+
+Система хранения данных с поддержкой разных типов хранилища через паттерн Adapter:
+
+- **Интерфейс IStorage**: Единый интерфейс для всех типов хранилища
+- **Адаптеры**: Реализации для LocalStorage, SessionStorage, Telegram CloudStorage
+- **Фабрика**: Автоматический выбор типа хранилища
+
+### Типы хранилища
+
+1. **Telegram CloudStorage** (приоритет) - через `@tma.js/sdk`
+2. **LocalStorage** - браузерное хранилище
+3. **SessionStorage** - fallback
+
+### Использование
+
+```tsx
+import { getDefaultStorage, STORAGE_KEYS } from '@/shared/lib/storage';
+
+const storage = getDefaultStorage();
+
+// Сохранение
+await storage.setItem(STORAGE_KEYS.WELCOME_SHOWN, 'true');
+
+// Получение
+const value = await storage.getItem(STORAGE_KEYS.WELCOME_SHOWN);
+
+// Удаление
+await storage.removeItem(STORAGE_KEYS.WELCOME_SHOWN);
+```
+
+### Структура
+
+```
+shared/lib/storage/
+├── storage.interface.ts          # Интерфейс IStorage
+├── storage.types.ts             # Типы и константы
+├── local-storage.adapter.ts      # Адаптер для LocalStorage
+├── session-storage.adapter.ts    # Адаптер для SessionStorage
+├── telegram-cloud-storage.adapter.ts  # Адаптер для Telegram CloudStorage
+├── storage.factory.ts           # Фабрика для создания хранилища
+└── index.ts                      # Экспорты
+```
+
+## Welcome и Home страницы
+
+### Welcome страница (`pages/welcome`)
+
+Приветственная страница, показываемая один раз при первом запуске:
+
+- Проверяет флаг `welcomeShown` в ClientStorage
+- Если флаг не установлен → показывает Welcome страницу
+- После клика "Начать" → сохраняет флаг и переходит на Home
+- Использует ClientStorage для сохранения состояния
+
+### Home страница (`pages/home`)
+
+Главная страница приложения после Welcome:
+
+- Отображается после прохождения Welcome
+- Интегрирована с существующими виджетами задач
+- Защищена через `ProtectedRoute` (требует авторизации)
+
+### Роутинг
+
+Логика роутинга:
+
+1. **Welcome** (`/welcome`) - показывается если флаг `welcomeShown` не установлен
+2. **Home** (`/` или `/home`) - главная страница, требует авторизации
+3. **Login** (`/login`) - страница входа (fallback при ошибках авторизации)
+4. **Tasks** (`/tasks`) - страница списка задач, требует авторизации
+
+## Telegram SDK интеграция
+
+### Инициализация
+
+SDK инициализируется при старте приложения в `app/index.tsx`:
+
+```tsx
+import { initializeTelegramSDK } from '@/shared/lib/telegram/telegram-sdk';
+
+initializeTelegramSDK();
+```
+
+### Утилиты (`shared/lib/telegram/telegram-sdk.ts`)
+
+- `getInitData()` - получение initData из SDK
+- `getCloudStorage()` - получение CloudStorage API
+- `isTelegramSDKAvailable()` - проверка доступности SDK
+- `isCloudStorageAvailable()` - проверка доступности CloudStorage
+
+### Mock для dev режима
+
+В dev режиме используется mock initData (`shared/lib/telegram/mock-init-data.ts`):
+
+- Генерируется автоматически если SDK недоступен
+- Формат: query string `telegramId=123456789&username=mockuser&...`
+- Отправляется в заголовке `Authorization: mock-tma <mockData>`
+
+## Единый endpoints
+
+Все API endpoints определены в `shared/api/endpoints.ts`:
+
+```ts
+export const endpoints = {
+  auth: {
+    login: '/auth/login',
+  },
+  tasks: {
+    list: '/tasks',
+    detail: (id: string) => `/tasks/${id}`,
+    // ...
+  },
+  // ...
+};
+```
+
+Использование:
+```ts
+import { endpoints } from '@/shared/api/endpoints';
+const url = endpoints.auth.login; // '/auth/login'
+```
