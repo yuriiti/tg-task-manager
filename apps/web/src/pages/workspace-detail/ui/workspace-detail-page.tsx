@@ -20,6 +20,7 @@ import {
   useUpdateWorkspaceMutation,
   useDeleteWorkspaceMutation,
 } from '../../../entities/workspace';
+import { WorkspaceTasksSection } from '../../../widgets/workspace-tasks';
 
 const { Title } = Typography;
 
@@ -154,6 +155,8 @@ export const WorkspaceDetailPage: React.FC = () => {
               </Descriptions>
             )}
           </Card>
+
+          {id && <WorkspaceTasksSection workspaceId={id} />}
         </Space>
       </div>
     </AppLayout>

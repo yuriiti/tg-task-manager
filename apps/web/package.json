@@ -19,6 +19,7 @@
     "@tma.js/sdk-react": "^3.0.15",
     "antd": "^6.2.0",
     "axios": "^1.6.2",
+    "framer-motion": "^12.26.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.12.0",
