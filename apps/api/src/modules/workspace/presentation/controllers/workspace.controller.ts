@@ -36,18 +36,18 @@ export class WorkspaceController {
     @Body() createWorkspaceDto: CreateWorkspaceDto,
     @Request() req: AuthenticatedRequest,
   ): Promise<WorkspaceResponseDto> {
-    const userId = req.user?.id; // MongoDB _id
-    if (!userId) {
-      throw new UnauthorizedException('User not authenticated');
-    }
+    const userId = req.user.id; // MongoDB _id
     const workspace = await this.workspaceService.create(userId, createWorkspaceDto);
     return this.toResponseDto(workspace);
   }
 
   @Get(':id')
   @UseGuards(WorkspaceMemberGuard)
-  async findOne(@Param('id') id: string, @Request() req: AuthenticatedRequest): Promise<WorkspaceResponseDto> {
-    const userId = req.user?.id; // MongoDB _id
+  async findOne(
+    @Param('id') id: string,
+    @Request() req: AuthenticatedRequest,
+  ): Promise<WorkspaceResponseDto> {
+    const userId = req.user.id; // MongoDB _id
     const workspace = await this.workspaceService.findOne(id, userId);
     return this.toResponseDto(workspace);
   }
@@ -59,7 +59,7 @@ export class WorkspaceController {
     @Body() updateWorkspaceDto: UpdateWorkspaceDto,
     @Request() req: AuthenticatedRequest,
   ): Promise<WorkspaceResponseDto> {
-    const userId = req.user?.id; // MongoDB _id
+    const userId = req.user.id; // MongoDB _id
     const workspace = await this.workspaceService.update(id, userId, updateWorkspaceDto);
     return this.toResponseDto(workspace);
   }
@@ -67,7 +67,7 @@ export class WorkspaceController {
   @Delete(':id')
   @UseGuards(WorkspaceMemberGuard)
   async remove(@Param('id') id: string, @Request() req: AuthenticatedRequest): Promise<void> {
-    const userId = req.user?.id; // MongoDB _id
+    const userId = req.user.id; // MongoDB _id
     await this.workspaceService.delete(id, userId);
   }
 
@@ -78,7 +78,7 @@ export class WorkspaceController {
     @Body() inviteParticipantDto: InviteParticipantDto,
     @Request() req: AuthenticatedRequest,
   ): Promise<WorkspaceResponseDto> {
-    const userId = req.user?.id; // MongoDB _id
+    const userId = req.user.id; // MongoDB _id
     const workspace = await this.workspaceService.inviteParticipant(
       id,
       userId,

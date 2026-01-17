@@ -12,8 +12,8 @@ export class Workspace {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ type: [String], required: true, default: [] })
-  participantIds: string[];
+  @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'User', required: true, default: [] })
+  participantIds: MongooseSchema.Types.ObjectId[];
 }
 
 export const WorkspaceSchema = SchemaFactory.createForClass(Workspace);

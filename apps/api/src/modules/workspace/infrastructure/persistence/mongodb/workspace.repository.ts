@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { IWorkspaceRepository } from '../../../domain/interfaces/workspace.repository.interface';
 import { WorkspaceEntity } from '../../../domain/entities/workspace.entity';
 import { Workspace, WorkspaceDocument } from './workspace.schema';
@@ -17,9 +17,12 @@ export class WorkspaceRepository implements IWorkspaceRepository {
   }
 
   async create(workspace: WorkspaceEntity): Promise<WorkspaceEntity> {
+    const participantObjectIds = workspace.participantIds.map(
+      (id) => new Types.ObjectId(id),
+    );
     const createdWorkspace = new this.workspaceModel({
       name: workspace.name,
-      participantIds: workspace.participantIds,
+      participantIds: participantObjectIds,
     });
 
     const saved = await createdWorkspace.save();
@@ -27,8 +30,16 @@ export class WorkspaceRepository implements IWorkspaceRepository {
   }
 
   async update(id: string, workspace: Partial<WorkspaceEntity>): Promise<WorkspaceEntity | null> {
+    const updateData: any = { ...workspace, updatedAt: new Date() };
+    
+    if (workspace.participantIds) {
+      updateData.participantIds = workspace.participantIds.map(
+        (id) => new Types.ObjectId(id),
+      );
+    }
+
     const updated = await this.workspaceModel
-      .findByIdAndUpdate(id, { ...workspace, updatedAt: new Date() }, { new: true })
+      .findByIdAndUpdate(id, updateData, { new: true })
       .exec();
 
     return updated ? this.toDomain(updated) : null;
@@ -44,14 +55,17 @@ export class WorkspaceRepository implements IWorkspaceRepository {
     if (!workspace) {
       return false;
     }
-    return workspace.participantIds.includes(userId);
+    const userObjectId = new Types.ObjectId(userId);
+    return workspace.participantIds.some(
+      (id) => id.toString() === userObjectId.toString(),
+    );
   }
 
   private toDomain(workspace: WorkspaceDocument): WorkspaceEntity {
     return new WorkspaceEntity(
       workspace._id.toString(),
       workspace.name,
-      workspace.participantIds,
+      workspace.participantIds.map((id) => id.toString()),
       workspace.createdAt,
       workspace.updatedAt,
     );
